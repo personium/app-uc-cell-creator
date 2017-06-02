@@ -13,9 +13,8 @@ function(request){
   var accountName = params.accName;
   var accountPass = params.accPass;
 
-  var ROOT_URL = "https://demo.personium.io/";
-
   // *******払い出されたユニットセルに合わせて"***"は書き換えてください*******
+  var ROOT_URL = "https://***/"; // Personiumドメイン
   var UNIT_CELLNAME = "***"; // unit admin cell名
   var unitUrl = {
       cellUrl: UNIT_CELLNAME,

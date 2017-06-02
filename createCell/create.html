@@ -95,8 +95,11 @@
     }
 </style>
 <script type="text/javascript">
-    var rootUrl = "https://demo.personium.io/";
-    var rootCell = "https://demo.personium.io/hn-ll/";
+    // ******* 環境に合わせて以下の***は変更して下さい。*******
+    var rootUrl = "https://***/"; // Personiumドメイン名
+    var rootCell = rootUrl + "***/"; // unit admin cell名
+    // ********************************************************
+
     $(document).ready(function() {
         var u = location.href;
         if (u.indexOf("file:") !== 0) {
@@ -216,7 +219,7 @@
         return $.ajax({
             type: "ACL",
             url: rootUrl + cellName + "/__/",
-            data: "<?xml version=\"1.0\" encoding=\"utf-8\" ?><D:acl xmlns:p=\"urn:x-personium:xmlns\" xmlns:D=\"DAV:\" xml:base=\"https://demo.personium.io/" + cellName + "/__role/__/\"><D:ace><D:principal><D:all/></D:principal><D:grant><D:privilege><p:read/></D:privilege></D:grant></D:ace></D:acl>",
+            data: "<?xml version=\"1.0\" encoding=\"utf-8\" ?><D:acl xmlns:p=\"urn:x-personium:xmlns\" xmlns:D=\"DAV:\" xml:base=\"" + rootUrl + cellName + "/__role/__/\"><D:ace><D:principal><D:all/></D:principal><D:grant><D:privilege><p:read/></D:privilege></D:grant></D:ace></D:acl>",
             headers: {
                 'Accept':'application/json',
                 'Authorization':'Bearer ' + token
