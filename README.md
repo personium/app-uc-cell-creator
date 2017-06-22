@@ -1,7 +1,7 @@
 # Cell-Creator for Unit Admin Cell
 
-このサンプルをUnitAdminセルに配備することで、ブラウザからCellを作成することができます。
-現状は無認証で作成可能になるので、アクセス権限等ご利用の際はご注意ください。
+このサンプルを任意のCellに配備することで、ブラウザから新しいCellを作成することができます。
+現状の実装は無認証で作成可能になるので、アクセス権限等ご利用の際はご注意ください。
 
 なお、機能をより改善したバージョンも随時更新します。
 
@@ -9,13 +9,13 @@
 
 ### 必要な情報
 
-1. UnitAdminCellのURL
+1. UnitAdminセルのURL
 2. UnitAdminアカウント
 3. 2.のパスワード
 
 ### 手順
 
-1. [Engineスクリプト](https://github.com/fujitsu-pio/app-sample-unitadmin/blob/master/createCell/engineService/user_cell_create.js#L18)と[HTML](https://github.com/fujitsu-pio/app-sample-unitadmin/blob/master/createCell/create.html#L98)に上記1-3の環境依存値を設定する。（HTML側はUnitURLとCell名を分けて指定）
+1. [Engineスクリプト](https://github.com/fujitsu-pio/app-sample-unitadmin/blob/master/createCell/engineService/user_cell_create.js#L18)と[HTML](https://github.com/fujitsu-pio/app-sample-unitadmin/blob/master/createCell/create.html#L98)に上記1-3の環境依存値を設定する。（UnitURLとCell名を分けて指定）
 2. [Engineスクリプト](https://github.com/fujitsu-pio/app-sample-unitadmin/blob/master/createCell/engineService/user_cell_create.js)を、メインBoxにEngineサービスとして登録する（コレクション名：unitService, サービス名：user_cell_create）
 3. 上記のサービスの実行権限を設定する（例：allユーザにexec）
 4. [HTML](https://github.com/fujitsu-pio/app-sample-unitadmin/blob/master/createCell/create.html)をメインBoxに配置する
