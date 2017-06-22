@@ -50,7 +50,7 @@ function(request){
   };
 
   // ********Get Token********
-  var urlT = ROOT_URL + UNIT_CELLNAME + "/__auth";
+  var urlT = ROOT_URL + UNIT_CELLNAME + "/__token";
   var bodyT = "grant_type=password";
   bodyT += "&username=unitadmin";
   bodyT += "&password=DEcqtljphmsGcqhz";
@@ -190,7 +190,7 @@ function(request){
   //}
 
   //// get token
-  //var urlT = "https://demo.personium.io/unitadmin/__auth";
+  //var urlT = "https://demo.personium.io/unitadmin/__token";
   //var bodyT = "grant_type=password";
   //bodyT += "&username=unitadmin";
   //bodyT += "&password=DEcqtljphmsGcqhz";
