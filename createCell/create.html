@@ -95,20 +95,12 @@
     }
 </style>
 <script type="text/javascript">
-    // ******* 環境に合わせて以下の***は変更して下さい。*******
+    // ******* Cell作成のServiceが配置されているPersonium環境に合わせて以下の***は変更して下さい。*******
     var rootUrl = "https://***/"; // Personiumドメイン名
-    var rootCell = rootUrl + "***/"; // unit admin cell名
-    // ********************************************************
+    var rootCell = rootUrl + "***/"; // service 配置 cell名
+    // **************************************************************************************************
 
     $(document).ready(function() {
-        var u = location.href;
-        if (u.indexOf("file:") !== 0) {
-            var i = u.indexOf("/", 8); // first slash
-            rootUrl = rootCell.substring(0, i + 1);
-            i = u.indexOf("/", i + 1);  // second slash
-            rootCell = u.substring(0, i + 1);
-        }
-
         $("#register").prop("disabled", true);
     });
 
