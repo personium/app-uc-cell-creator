@@ -175,9 +175,9 @@
         var displayName = $("#" + displayNameID).val();
         var MINLENGTH = 1;
         var MAXLENGTH = 128;
-        var letters = /^[一-龠ぁ-ゔ[ァ-ヴー々〆〤0-9０-９a-zA-ZＡ-Ｚ-_\s]+$/;
-        var specialchar = /^[-_\s]*$/;
-        var allowedLetters = /^[0-9a-zA-Z-_\s]+$/;
+        var letters = /^[一-龠ぁ-ゔ[ァ-ヴー々〆〤0-9０-９a-zA-ZＡ-Ｚ-_]+$/;
+        var specialchar = /^[-_]/;
+        var allowedLetters = /^[0-9a-zA-Z-_]+$/;
         var lenDisplayName = displayName.length;
         document.getElementById(displayNameSpan).innerHTML = "";
         if(lenDisplayName < MINLENGTH || displayName == undefined || displayName == null || displayName == "") {
@@ -186,13 +186,13 @@
         } else if (lenDisplayName >= MAXLENGTH) {
         	document.getElementById(displayNameSpan).innerHTML = "128文字以下で入力して下さい。";
         	return false;
-        } else if (lenDisplayName != 0 && ! (displayName.match(letters))){
+        } else if (lenDisplayName != 0 && !(displayName.match(letters))){
         	document.getElementById(displayNameSpan).innerHTML = "特殊文字は“-”と“_”のみ使用出来ます。";
         	return false;
         } else if (lenDisplayName != 0 && !(displayName.match(allowedLetters))) {
         	document.getElementById(displayNameSpan).innerHTML = "全角文字は使用出来ません。";
         	return false;
-        } else if(lenDisplayName != 0 && (specialchar.toString().indexOf(displayName.substring(0,1)) >= 0)){
+        } else if(lenDisplayName != 0 && displayName.match(specialchar)){
         	document.getElementById(displayNameSpan).innerHTML = "特殊文字で始めることは出来ません。";
         	return false;
         }
