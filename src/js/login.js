@@ -15,10 +15,20 @@
  * limitations under the License.
  */
 
-// ******* Cell作成のServiceが配置されているPersonium環境に合わせて以下の***は変更して下さい。*******
-var rootUrl = "https://***/"; // Personiumドメイン名
-var rootCell = rootUrl + "***/"; // service 配置 cell名
-// **************************************************************************************************
+/*
+ * Replace the "***" with a valid Personium domain name
+ */
+var domainName = "***";
+
+/*
+ * Replace the "***" with a valid Cell name where this service is running.
+ */
+var unitAdminCellName = "***";
+
+
+// Set up necessary URLs for this service.
+var rootUrl = ["https://", domainName, "/"].join();
+var serviceCell = [rootUrl, unitAdminCellName, "/"].join();
 
 $(document).ready(function() {
     $("#register").prop("disabled", true);
@@ -62,25 +72,27 @@ function checkInput(id, msgId) {
 function createCell() {
     createCellAPI().done(function(data) {
         setMainBoxACL(data.access_token).done(function(data) {
-            $("#dispMsg").removeClass("errorMsg");
-            $("#dispMsg").removeClass("successMsg");
-            $("#dispMsg").toggleClass("successMsg");
-            $('#dispMsg').html('セルを作成しました。');
-            $('#dispMsg').css("display", "block");
+            displaySuccessMsg('セルを作成しました。');
         }).fail(function(data) {
-            $("#dispMsg").removeClass("errorMsg");
-            $("#dispMsg").removeClass("successMsg");
-            $("#dispMsg").toggleClass("successMsg");
-            $('#dispMsg').html('セルの作成に成功しました。プロフィールは非公開です。');
-            $('#dispMsg').css("display", "block");
+            displaySuccessMsg('セルの作成に成功しました。プロフィールは非公開です。');
         });
     }).fail(function(data) {
-        $("#dispMsg").removeClass("errorMsg");
-        $("#dispMsg").removeClass("successMsg");
-        $("#dispMsg").toggleClass("errorMsg");
-        $('#dispMsg').html('セル作成に失敗しました。');
-        $('#dispMsg').css("display", "block");
+        displayFailureMsg('セル作成に失敗しました。');
     });
+}
+
+function displaySuccessMsg(msg) {
+    $("#dispMsg").removeClass("errorMsg")
+                 .addClass("successMsg")
+                 .html(msg)
+                 .show();
+}
+
+function displayFailureMsg(msg) {
+    $("#dispMsg").removeClass("successMsg")
+                 .addClass("errorMsg")
+                 .html(msg)
+                 .show();
 }
 
 function validateCheck(displayNameID, displayNameSpan) {
@@ -93,20 +105,20 @@ function validateCheck(displayNameID, displayNameSpan) {
     var lenDisplayName = displayName.length;
     document.getElementById(displayNameSpan).innerHTML = "";
     if(lenDisplayName < MINLENGTH || displayName == undefined || displayName == null || displayName == "") {
-    	document.getElementById(displayNameSpan).innerHTML =  "入力して下さい。";
-    	return false;
+        document.getElementById(displayNameSpan).innerHTML =  "入力して下さい。";
+        return false;
     } else if (lenDisplayName >= MAXLENGTH) {
-    	document.getElementById(displayNameSpan).innerHTML = "128文字以下で入力して下さい。";
-    	return false;
+        document.getElementById(displayNameSpan).innerHTML = "128文字以下で入力して下さい。";
+        return false;
     } else if (lenDisplayName != 0 && !(displayName.match(letters))){
-    	document.getElementById(displayNameSpan).innerHTML = "特殊文字は“-”と“_”のみ使用出来ます。";
-    	return false;
+        document.getElementById(displayNameSpan).innerHTML = "特殊文字は“-”と“_”のみ使用出来ます。";
+        return false;
     } else if (lenDisplayName != 0 && !(displayName.match(allowedLetters))) {
-    	document.getElementById(displayNameSpan).innerHTML = "全角文字は使用出来ません。";
-    	return false;
+        document.getElementById(displayNameSpan).innerHTML = "全角文字は使用出来ません。";
+        return false;
     } else if(lenDisplayName != 0 && displayName.match(specialchar)){
-    	document.getElementById(displayNameSpan).innerHTML = "特殊文字で始めることは出来ません。";
-    	return false;
+        document.getElementById(displayNameSpan).innerHTML = "特殊文字で始めることは出来ません。";
+        return false;
     }
     return true;
 };
@@ -114,7 +126,7 @@ function validateCheck(displayNameID, displayNameSpan) {
 function createCellAPI() {
     return $.ajax({
         type:"POST",
-        url: rootCell + "__/unitService/user_cell_create",
+        url: serviceCell + "__/unitService/user_cell_create",
         data: {
             'cellName':$("#iCellName").val(),
             'accName':$("#iAccName").val(),
