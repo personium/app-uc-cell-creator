@@ -30,6 +30,22 @@ var unitAdminCellName = "***";
 var rootUrl = ["https://", domainName, "/"].join();
 var serviceCell = [rootUrl, unitAdminCellName, "/"].join();
 
+i18next
+    .use(i18nextXHRBackend)
+    .use(i18nextBrowserLanguageDetector)
+    .init({
+    fallbackLng: 'en',
+    debug: true,
+    backend: {
+        // load from i18next-gitbook repo
+        loadPath: './locales/{{lng}}/translation.json',
+        crossDomain: true
+    }
+    }, function(err, t) {
+        // init set content
+        //updateContent();
+    });
+
 $(document).ready(function() {
     $("#register").prop("disabled", true);
 });

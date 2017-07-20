@@ -1,5 +1,5 @@
 # Personal Cell Creator  
-Personal Cell Creator is an adminintrative application that can only be deployed within an Unit Admin cell.  
+Personal Cell Creator is an adminintrative application that can only be deployed within an Unit Admin cell. Note: 
 It allows the Unit Admin cell owner/administrator to create a personal cell which belongs to the deployed environment with just one click.  
 Since this sample application does not implement any form of authentication, please be careful how you deploy it.  
 
@@ -11,7 +11,9 @@ Improved version will be released irregularly.
 Before the installation, make sure you have the following information ready.  
 
 1. A valid Personium URL  
+Used by domainName.   
 1. Unit Admin Cell name  
+Used by unitAdminCellName.  
 1. Unit Admin account  
 1. Password of the Unit Admin account 
 

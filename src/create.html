@@ -1,43 +1,46 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>利用者払い出し</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <link href='https://fonts.googleapis.com/css?family=Raleway:400,200' rel='stylesheet' type='text/css'>
-    <link href="./css/common.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src="./js/login.js" ></script>
-</head>
-<body>
-  <section class="login-section">
-    <div>利用者セルの払い出しを行います。</div>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title data-i18n="create_form.title">Personal Cell Creator</title>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/javascript"src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://unpkg.com/i18next/i18next.min.js"></script>
+        <script src="https://unpkg.com/i18next-xhr-backend/i18nextXHRBackend.js"></script>
+        <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.js"></script>
+        <link href='https://fonts.googleapis.com/css?family=Raleway:400,200' rel='stylesheet' type='text/css'>
+        <link href="./css/common.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="./js/login.js" ></script>
+    </head>
+    <body>
+      <section class="login-section">
+        <div class="i18n" data-i18n="create_form.description">Fill in the necessary information to create a new cell.</div>
 
-    <div class="login-form-controls">
-      <div>
-        <input id="iCellName" type="text" placeholder="セル名 を入力して下さい。" value="" onblur="checkCellExis();">
-        <p id="iCellNameMsg" class="errorMsg"></p>
-      </div>
-      <div>
-        <input id="iAccName" type="text" placeholder="アカウント名 を入力して下さい。" value="" onblur="checkInput('iAccName', 'iAccNameMsg');">
-        <p id="iAccNameMsg" class="errorMsg"></p>
-      </div>
-      <div>
-        <input id="iAccPw" type="password" placeholder="パスワード を入力して下さい。" value="" onblur="checkInput('iAccPw', 'iAccPwMsg');">
-        <p id="iAccPwMsg" class="errorMsg"></p>
-      </div>
-      <div>
-        <button class="login_btn_b round-btn" id="register" onClick="createCell();return false;">作成する</button>
-      </div>
-    </div>
-    <!-- /login-form-controls -->
-  </section>
-  <section class="login-section">
-    <div id="dispMsg" class="" style="display:none;">
-    </div>
-  </section>
-</body>
+        <div class="login-form-controls">
+          <div>
+            <input id="iCellName" type="text" data-i18n="[placeholder]create_form.cell_name" value="" onblur="checkCellExis();" />
+            <p id="iCellNameMsg" class="errorMsg"></p>
+          </div>
+          <div>
+            <input id="iAccName" type="text" data-i18n="[placeholder]create_form.account_name" value="" onblur="checkInput('iAccName', 'iAccNameMsg');">
+            <p id="iAccNameMsg" class="errorMsg"></p>
+          </div>
+          <div>
+            <input id="iAccPw" type="password" data-i18n="[placeholder]create_form.password" value="" onblur="checkInput('iAccPw', 'iAccPwMsg');">
+            <p id="iAccPwMsg" class="errorMsg"></p>
+          </div>
+          <div>
+            <button class="login_btn_b round-btn" id="register" onClick="createCell();return false;" data-i18n="create_form.ok_button">Create</button>
+          </div>
+        </div>
+        <!-- /login-form-controls -->
+      </section>
+      <section class="login-section">
+        <div id="dispMsg" class="" style="display:none;">
+        </div>
+      </section>
+    </body>
 </html>

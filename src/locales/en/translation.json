@@ -1,0 +1,11 @@
+{
+    "title": "Personal Cell Creator",
+    "create_form": {
+        "description": "Fill in the necessary information to create a new cell.",
+        "cell_name": "Name of the new cell",
+        "account_name": "Name of the new admin account",
+        "password": "Create a password",
+        "confirm_password": "Confirm your password",
+        "ok_button": "Create"
+    }
+}

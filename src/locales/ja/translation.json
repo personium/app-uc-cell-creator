@@ -1,0 +1,11 @@
+{
+    "title": "利用者払い出し",
+    "create_form": {
+        "description": "利用者セルの払い出しを行います。",
+        "cell_name": "作成するセル名を入力",
+        "account_name": "作成するアカウント名を入力",
+        "password": "作成するアカウントのパスワードを入力",
+        "confirm_password": "パスワードの確認入力",
+        "ok_button": "作成"
+    }
+}
