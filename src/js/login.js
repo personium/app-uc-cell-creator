@@ -35,9 +35,9 @@ var targetRootUrl = rootUrl;
 var serviceCellUrl = [rootUrl, deployedCellName, "/"].join();
 var createCellApiUrl = [serviceCellUrl, "__/unitService/user_cell_create"].join();
 
-i18next
-    .use(i18nextXHRBackend)
-    .use(i18nextBrowserLanguageDetector)
+i18n
+//    .use(i18nextXHRBackend)
+//    .use(i18nextBrowserLanguageDetector)
     .init({
         fallbackLng: 'en',
         debug: true,
@@ -47,8 +47,8 @@ i18next
         crossDomain: true
         }
     }, function(err, t) {
-        // init set content
-        //updateContent();
+        $("title").i18n();
+        $(".i18n").i18n();
     });
 
 $(document).ready(function() {
@@ -59,7 +59,7 @@ function checkCellExis() {
     var cellName = $("#iCellName").val();
     if (cellName) {
         getCell(cellName).done(function(data, status, xhr) {
-            $("#iCellNameMsg").html("既に存在します。");
+            $("#iCellNameMsg").html(i18n.t("create_form.msg.error.cell_already_exist"));
         }).fail(function(data) {
             $("#iCellNameMsg").html("");
             checkInput("iCellName", "iCellNameMsg");
@@ -93,12 +93,12 @@ function checkInput(id, msgId) {
 function createCell() {
     createCellAPI().done(function(data) {
         setMainBoxACL(data.access_token).done(function(data) {
-            displaySuccessMsg('セルを作成しました。');
+            displaySuccessMsg(i18n.t("create_form.msg.info.cell_created"));
         }).fail(function(data) {
-            displaySuccessMsg('セルの作成に成功しました。プロフィールは非公開です。');
+            displaySuccessMsg(i18n.t("create_form.msg.info.private_profile_cell_created"));
         });
     }).fail(function(data) {
-        displayFailureMsg('セル作成に失敗しました。');
+        displayFailureMsg(i18n.t("create_form.msg.err.fail_to_create_cell"));
     });
 }
 
@@ -126,19 +126,19 @@ function validateCheck(displayNameID, displayNameSpan) {
     var lenDisplayName = displayName.length;
     document.getElementById(displayNameSpan).innerHTML = "";
     if(lenDisplayName < MINLENGTH || displayName == undefined || displayName == null || displayName == "") {
-        document.getElementById(displayNameSpan).innerHTML =  "入力して下さい。";
+        $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.less_minimum_length", { value: MINLENGTH}))；
         return false;
     } else if (lenDisplayName >= MAXLENGTH) {
-        document.getElementById(displayNameSpan).innerHTML = "128文字以下で入力して下さい。";
+        $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.exceed_maximum_length", { value: MAXLENGTH}));
         return false;
     } else if (lenDisplayName != 0 && !(displayName.match(letters))){
-        document.getElementById(displayNameSpan).innerHTML = "特殊文字は“-”と“_”のみ使用出来ます。";
+        $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.unsupported_symbols"));
         return false;
     } else if (lenDisplayName != 0 && !(displayName.match(allowedLetters))) {
-        document.getElementById(displayNameSpan).innerHTML = "全角文字は使用出来ません。";
+        $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.multibyte_not_allowed"));
         return false;
     } else if(lenDisplayName != 0 && displayName.match(specialchar)){
-        document.getElementById(displayNameSpan).innerHTML = "特殊文字で始めることは出来ません。";
+        $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.cannot_start_with_symbol"));
         return false;
     }
     return true;
