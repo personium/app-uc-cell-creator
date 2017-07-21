@@ -18,29 +18,34 @@
 /*
  * Replace the "***" with a valid Personium domain name
  */
-var domainName = "***";
+var deployedDomainName = "***";
 
 /*
  * Replace the "***" with a valid Cell name where this service is running.
  */
-var unitAdminCellName = "***";
+var deployedCellName = "***";
 
 
-// Set up necessary URLs for this service.
-var rootUrl = ["https://", domainName, "/"].join();
-var serviceCell = [rootUrl, unitAdminCellName, "/"].join();
+/* 
+ * Set up necessary URLs for this service.
+ * Current setup procedures only support creating a cell within the same Personium server.
+ */
+var rootUrl = ["https://", deployedDomainName, "/"].join();
+var targetRootUrl = rootUrl;
+var serviceCellUrl = [rootUrl, deployedCellName, "/"].join();
+var createCellApiUrl = [serviceCellUrl, "__/unitService/user_cell_create"].join();
 
 i18next
     .use(i18nextXHRBackend)
     .use(i18nextBrowserLanguageDetector)
     .init({
-    fallbackLng: 'en',
-    debug: true,
-    backend: {
-        // load from i18next-gitbook repo
+        fallbackLng: 'en',
+        debug: true,
+        backend: {
+            // load from i18next-gitbook repo
         loadPath: './locales/{{lng}}/translation.json',
         crossDomain: true
-    }
+        }
     }, function(err, t) {
         // init set content
         //updateContent();
@@ -142,7 +147,7 @@ function validateCheck(displayNameID, displayNameSpan) {
 function createCellAPI() {
     return $.ajax({
         type:"POST",
-        url: serviceCell + "__/unitService/user_cell_create",
+        url: createCellApiUrl, // unitService engine URL (where this service is deployed)
         data: {
             'cellName':$("#iCellName").val(),
             'accName':$("#iAccName").val(),
@@ -158,7 +163,7 @@ function setMainBoxACL(token) {
     var cellName = $("#iCellName").val();
     return $.ajax({
         type: "ACL",
-        url: rootUrl + cellName + "/__/",
+        url: targetRootUrl + cellName + "/__/", // Target Personium URL (can be another Personium server)
         data: "<?xml version=\"1.0\" encoding=\"utf-8\" ?><D:acl xmlns:p=\"urn:x-personium:xmlns\" xmlns:D=\"DAV:\" xml:base=\"" + rootUrl + cellName + "/__role/__/\"><D:ace><D:principal><D:all/></D:principal><D:grant><D:privilege><p:read/></D:privilege></D:grant></D:ace></D:acl>",
         headers: {
             'Accept':'application/json',
@@ -170,7 +175,7 @@ function setMainBoxACL(token) {
 function getCell(cellName) {
     return $.ajax({
         type: "GET",
-        url: rootUrl + cellName + "/",
+        url: targetRootUrl + cellName + "/", // Target Personium URL (can be another Personium server)
         headers:{
             'Accept':'application/xml'
         }
