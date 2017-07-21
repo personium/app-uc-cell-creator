@@ -116,32 +116,43 @@ function displayFailureMsg(msg) {
                  .show();
 }
 
-function validateCheck(displayNameID, displayNameSpan) {
+function validateCheck(displayNameID, formFieldMsgId) {
     var displayName = $("#" + displayNameID).val();
     var MINLENGTH = 1;
     var MAXLENGTH = 128;
-    var letters = /^[一-龠ぁ-ゔ[ァ-ヴー々〆〤0-9０-９a-zA-ZＡ-Ｚ-_]+$/;
-    var specialchar = /^[-_]/;
     var allowedLetters = /^[0-9a-zA-Z-_]+$/;
     var lenDisplayName = displayName.length;
-    document.getElementById(displayNameSpan).innerHTML = "";
+
+    $("#" + formFieldMsgId).empty();
     if(lenDisplayName < MINLENGTH || displayName == undefined || displayName == null || displayName == "") {
-        $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.less_minimum_length", { value: MINLENGTH}))；
-        return false;
-    } else if (lenDisplayName > MAXLENGTH) {
-        $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.exceed_maximum_length", { value: MAXLENGTH}));
-        return false;
-    } else if (lenDisplayName != 0 && !(displayName.match(letters))){
-        $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.unsupported_symbols"));
-        return false;
-    } else if (lenDisplayName != 0 && !(displayName.match(allowedLetters))) {
-        $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.multibyte_not_allowed"));
-        return false;
-    } else if(lenDisplayName != 0 && displayName.match(specialchar)){
-        $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.cannot_start_with_symbol"));
+        $("#" + formFieldMsgId).html(i18n.t("create_form.validate.warning.less_minimum_length", { value: MINLENGTH}));
         return false;
     }
-    return true;
+
+    return isCellNameValid(displayName, formFieldMsgId);
+};
+
+function isCellNameValid(str, formFieldMsgId) {
+    var validCellName = /^([a-zA-Z0-9]([a-zA-Z0-9\-\_]){0,127})?$/g;
+    var MAXLENGTH = 128;
+    var multibyteChar = /[^\x00-\x7F]+/g;
+    var startWithAllowedSymbols = /^[-_]/;
+    if (str.match(validCellName)) {
+        // cell name is valid
+        return true;
+    } else if (str.length > MAXLENGTH) {
+        $("#" + formFieldMsgId).html(i18n.t("create_form.validate.warning.exceed_maximum_length", { value: MAXLENGTH}));
+        return false;
+    } else if (str.match(multibyteChar)) {
+        $("#" + formFieldMsgId).html(i18n.t("create_form.validate.warning.multibyte_not_allowed"));
+        return false;
+    } else if (str.match(startWithAllowedSymbols)) {
+        $("#" + formFieldMsgId).html(i18n.t("create_form.validate.warning.cannot_start_with_symbol"));
+        return false;
+    } else {
+        $("#" + formFieldMsgId).html(i18n.t("create_form.validate.warning.unsupported_symbols"));
+        return false;
+    }
 };
 
 function createCellAPI() {
