@@ -128,7 +128,7 @@ function validateCheck(displayNameID, displayNameSpan) {
     if(lenDisplayName < MINLENGTH || displayName == undefined || displayName == null || displayName == "") {
         $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.less_minimum_length", { value: MINLENGTH}))；
         return false;
-    } else if (lenDisplayName >= MAXLENGTH) {
+    } else if (lenDisplayName > MAXLENGTH) {
         $("#" + displayNameSpan).html(i18n.t("create_form.validate.warning.exceed_maximum_length", { value: MAXLENGTH}));
         return false;
     } else if (lenDisplayName != 0 && !(displayName.match(letters))){

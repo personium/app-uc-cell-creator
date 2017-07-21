@@ -175,7 +175,7 @@
         if(lenDisplayName < MINLENGTH || displayName == undefined || displayName == null || displayName == "") {
         	document.getElementById(displayNameSpan).innerHTML =  "入力して下さい。";
         	return false;
-        } else if (lenDisplayName >= MAXLENGTH) {
+        } else if (lenDisplayName > MAXLENGTH) {
         	document.getElementById(displayNameSpan).innerHTML = "128文字以下で入力して下さい。";
         	return false;
         } else if (lenDisplayName != 0 && !(displayName.match(letters))){
