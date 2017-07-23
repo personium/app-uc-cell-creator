@@ -21,7 +21,7 @@
 var deployedDomainName = "***";
 
 /*
- * Replace the "***" with a valid Cell name where this service is running.
+ * Replace the "***" with a valid cell name where this service is running.
  */
 var deployedCellName = "***";
 

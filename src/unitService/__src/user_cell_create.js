@@ -13,15 +13,33 @@ function(request){
   var accountName = params.accName;
   var accountPass = params.accPass;
 
-  // *******払い出されたユニットセルに合わせて"***"は書き換えてください*******
-  var ROOT_URL = "https://***/"; // Personiumドメイン
-  var UNIT_CELLNAME = "***"; // unit admin cell名
-  var unitUrl = {
-      cellUrl: UNIT_CELLNAME,
-      userId:"***", // unit admin cellのアカウント
-      password:"***" // unit admin cellのアカウントパスワード
-  };
-  // ************************************************************************
+  /*
+   * Replace the "***" with the target Personium domain name
+   */
+  var targetDomainName = "***";
+
+  /*
+   * Replace the "***" with a valid Unit Admin cell name of the target Personium Unit.
+   */
+  var targetUnitAdminCellName = "***";
+
+  /*
+   * Replace the "***" with a valid Unit Admin account name of the target Personium Unit.
+   */
+  var targetUnitAdminAccountName = "***";
+
+  /*
+   * Replace the "***" with a valid Unit Admin account password of the target Personium Unit.
+   */
+  var targetUnitAdminAccountPassword = "***";
+
+  
+  /* 
+   * Set up necessary URLs for this service.
+   * Current setup procedures only support creating a cell within the same Personium server.
+   */
+  var rootUrl = ["https://", targetDomainName, "/"].join();
+  var targetRootUrl = rootUrl;
 
   // Hack Ver
   var dcx = {sports: {HTTP: {}}};
@@ -50,11 +68,12 @@ function(request){
   };
 
   // ********Get Token********
-  var urlT = ROOT_URL + UNIT_CELLNAME + "/__token";
-  var bodyT = "grant_type=password";
-  bodyT += "&username=unitadmin";
-  bodyT += "&password=DEcqtljphmsGcqhz";
-  bodyT += "&p_target=" + ROOT_URL;
+  var urlT = [targetRootUrl, targetUnitAdminCellName, "/__token"].join();
+  var bodyT = [
+    "grant_type=password",
+    "&username=", targetUnitAdminAccountName,
+    "&password=", targetUnitAdminAccountPassword,
+    "&p_target=" + targetRootUrl].join();
   var headersT = {}
   var contentTypeT = "application/x-www-form-urlencoded";
   
@@ -73,7 +92,7 @@ function(request){
   // ************************
 
   // ********Create cell********
-  var urlC = ROOT_URL + "__ctl/Cell";
+  var urlC = targetRootUrl + "__ctl/Cell";
   var bodyC = "{\"Name\": \"" + cellName + "\"}";
   var headersC = {
       "Authorization":"Bearer " + token
@@ -90,7 +109,7 @@ function(request){
   // **************************
 
   // ********Create admin account********
-  var urlA = ROOT_URL + cellName + "/__ctl/Account";
+  var urlA = targetRootUrl + cellName + "/__ctl/Account";
   var bodyA = "{\"Name\": \"" + accountName + "\"}";
   var headersA = {
       "Authorization":"Bearer " + token,
