@@ -67,7 +67,7 @@ Part of the following procedures required your to use the UnitManager.
         The following is the expected result.  
         ![Service path registered](./doc/ServiceConfigurationDialog_Registered.PNG)  
 1. The following diagram shows what the main box should look like after when Personal Cell Creator is properly deployed.   
-![main box](./doc/mainBox_folderStructure.PNG)  
+![main box](./doc/mainBox_FolderStructure.PNG)  
 1. Access the create.html file on the deployed cell.  
 
         {URL of the deployed cell}/__/create.html

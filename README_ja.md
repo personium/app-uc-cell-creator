@@ -60,7 +60,7 @@
         正しい設定したの画面  
         ![Service path registered](./doc/ServiceConfigurationDialog_Registered.PNG) 
 1. Personal Cell Creatorを適用後のメインBoxのフォルダ構成。  
-![main box](./doc/mainBox_folderStructure.PNG)  
+![main box](./doc/mainBox_FolderStructure.PNG)  
 1. 以下にアクセスする
 
 ```
