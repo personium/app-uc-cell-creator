@@ -38,7 +38,7 @@ function(request){
    * Set up necessary URLs for this service.
    * Current setup procedures only support creating a cell within the same Personium server.
    */
-  var rootUrl = ["https://", targetDomainName, "/"].join();
+  var rootUrl = ["https://", targetDomainName, "/"].join("");
   var targetRootUrl = rootUrl;
 
   // Hack Ver
@@ -68,12 +68,12 @@ function(request){
   };
 
   // ********Get Token********
-  var urlT = [targetRootUrl, targetUnitAdminCellName, "/__token"].join();
+  var urlT = [targetRootUrl, targetUnitAdminCellName, "/__token"].join("");
   var bodyT = [
     "grant_type=password",
     "&username=", targetUnitAdminAccountName,
     "&password=", targetUnitAdminAccountPassword,
-    "&p_target=" + targetRootUrl].join();
+    "&p_target=" + targetRootUrl].join("");
   var headersT = {}
   var contentTypeT = "application/x-www-form-urlencoded";
   

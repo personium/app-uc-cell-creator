@@ -30,10 +30,10 @@ var deployedCellName = "***";
  * Set up necessary URLs for this service.
  * Current setup procedures only support creating a cell within the same Personium server.
  */
-var rootUrl = ["https://", deployedDomainName, "/"].join();
+var rootUrl = ["https://", deployedDomainName, "/"].join("");
 var targetRootUrl = rootUrl;
-var serviceCellUrl = [rootUrl, deployedCellName, "/"].join();
-var createCellApiUrl = [serviceCellUrl, "__/unitService/user_cell_create"].join();
+var serviceCellUrl = [rootUrl, deployedCellName, "/"].join("");
+var createCellApiUrl = [serviceCellUrl, "__/unitService/user_cell_create"].join("");
 
 i18n
 //    .use(i18nextXHRBackend)
@@ -98,7 +98,7 @@ function createCell() {
             displaySuccessMsg(i18n.t("create_form.msg.info.private_profile_cell_created"));
         });
     }).fail(function(data) {
-        displayFailureMsg(i18n.t("create_form.msg.err.fail_to_create_cell"));
+        displayFailureMsg(i18n.t("create_form.msg.error.fail_to_create_cell"));
     });
 }
 
