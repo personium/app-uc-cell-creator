@@ -9,11 +9,11 @@
         "ok_button": "Create",
         "validate": {
             "warning": {
-                "less_minimum_length": "At least __value__ character(s) must be used.",
-                "exceed_maximum_length": "Maximum number of __value__ characters allowed.",
+                "less_minimum_length": "Please enter at least __value__ character(s).",
+                "exceed_maximum_length": "Please enter __value__ characters or less.",
                 "multibyte_not_allowed": "Multibyte characters are not allowed.",
-                "cannot_start_with_symbol": "Entered info cannot start with symbols.",
-                "unsupported_symbols": "Entered info contains unsupported symbol(s)."
+                "cannot_start_with_symbol": "Cannot start with symbols.",
+                "unsupported_symbols": "Please do not use unsupported symbol(s)."
             }
         },
         "msg": {
