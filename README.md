@@ -30,18 +30,38 @@ Current implementation only support the same Personium server (deployedDomainNam
         - src/js/common.js  
         - src/locales/en/translation.json  
         - src/locales/ja/translation.json  
-    1. Configure the access permissions for the uploaded files (e.g. all-user read)  
+    1. Configure the access permissions (e.g. all-user read) of the uploaded files.  
+        1. Move inside the main box.  
+        1. Click the ACL Settings edit icon (pencil) and configure the permission.  
+        1. Click the Save button.  
+        The following is the expected result.  
+        ![Main box's permission](./doc/main_Permission.PNG)  
 1. Perform the following procedures to install the engine script on the deployed cell.  
     1. Specify the following in [Engine script](./src/unitService/__src/user_cell_create.js).  
         - targetDomainName  
         - targetUnitAdminCellName  
         - targetUnitAdminAccountName  
         - targetUnitAdminAccountPassword  
-    1. Create a collection (unitService) and service (user_cell_create) in the main box of the deployed cell.
-    1. Upload the following files to the serive.  
+    1. Create a service (unitService) in the main box of the deployed cell.  
+    ![Create a service](./doc/CreateServiceDialog.PNG)  
+    1. Upload the following files to the newly created service's __src folder.  
         - src/unitService/__src/user_cell_create.js  
-    1. Configure the access permission for the service (user_cell_create).  
-    e.g. all-user exec  
+    1. Configure the access permission (e.g. all-user exec) for the service.  
+        1. Move inside the main box.  
+        1. Select (check mark) the service.
+        1. Click the ACL Settings edit icon (pencil) and configure the permission.  
+        1. Click the Save button.  
+        The following is the expected result.  
+        ![unitService's permission](./doc/unitService_Permission.PNG)  
+    1. Select the service and configure the service path to be  
+        1. Move inside the main box.  
+        1. Select (check mark) the service.  
+        1. Click Confiugre located on the upper left of the table.  
+        1. Assign the service path (user_cell_create) to the JavaScript file (user_cell_create.js).  
+        ![Configure service](./doc/ServiceConfigurationDialog.PNG)  
+        1. Click the Register button.  
+        The following is the expected result.  
+        ![Service path registered](./doc/ServiceConfigurationDialog_Registered.PNG)  
 1. Access the create.html file on the deployed cell.  
 
         {URL of the deployed cell}/__/create.html
