@@ -1,4 +1,4 @@
-# Cell-Creator for Unit Admin Cell
+# Personal Cell Creator  
 
 このサンプルを任意のCellに配備することで、ブラウザから新しいCellを作成することができます。
 現状の実装は無認証で作成可能になるので、アクセス権限等ご利用の際はご注意ください。
@@ -9,18 +9,59 @@
 
 ### 必要な情報
 
-1. UnitAdminセルのURL
-2. UnitAdminアカウント
-3. 2.のパスワード
+1. UnitAdminセルのURL (https://deployedDomainName/deployedCellName/
+1. UnitAdminセル名 (targetUnitAdminCellName)  
+1. UnitAdminアカウント (targetUnitAdminAccountName)
+1. 上記UnitAdminアカウントのパスワード (targetUnitAdminAccountPassword)
 
 ### 手順
+一部の作業はUnitManagerで実施必要です。  
 
-1. [Engineスクリプト](https://github.com/fujitsu-pio/app-sample-unitadmin/blob/master/createCell/engineService/user_cell_create.js#L18)と[HTML](https://github.com/fujitsu-pio/app-sample-unitadmin/blob/master/createCell/create.html#L98)に上記1-3の環境依存値を設定する。（UnitURLとCell名を分けて指定）
-2. [Engineスクリプト](https://github.com/fujitsu-pio/app-sample-unitadmin/blob/master/createCell/engineService/user_cell_create.js)を、メインBoxにEngineサービスとして登録する（コレクション名：unitService, サービス名：user_cell_create）
-3. 上記のサービスの実行権限を設定する（例：allユーザにexec）
-4. [HTML](https://github.com/fujitsu-pio/app-sample-unitadmin/blob/master/createCell/create.html)をメインBoxに配置する
-5. 配置したHTMLにアクセス権を設定する（例：allユーザにread）
-6. 以下にアクセスする
+1. 下記を実施してClientモジュールを適用してください。  
+    1. [Clientスクリプト](./src/js/common.js)に上記必要な情報の環境依存値を設定する。  
+        - deployedDomainName  
+        - deployedCellName  
+    1. src フォルダ配下のファイル（下記と同じフォルダ構成で）をメインBox配下に配置する。  
+        - create.html  
+        - css/common.css  
+        - js/common.js  
+        - locales/en/translation.json  
+        - locales/ja/translation.json  
+    1. メインBoxのアクセス権限（例： allユーザにRead）を設定する。  
+        1. メインBox配下に移動  
+        1. ACL Settings の編集アイコンをクリックし、all (anyone)のアクセス権限をReadに設定する  
+        1. Saveボタンをクリックして設定を有効にする    
+        正しい設定したの画面  
+        ![Main box's permission](./doc/main_Permission.PNG)  
+1. 下記を実施してEngineスクリプトを適用してください。  
+    1. [Engineスクリプト](./src/unitService/__src/user_cell_create.js)に上記必要な情報の環境依存値を設定する。  
+        - targetDomainName (deployedDomainNameを流用)  
+        - targetUnitAdminCellName  
+        - targetUnitAdminAccountName  
+        - targetUnitAdminAccountPassword  
+    1. メインBoxにサービス（サービス名：unitService）として登録する。  
+    ![Create a service](./doc/CreateServiceDialog.PNG)  
+    1. 下記のファイルを作成したサービス（unitService）の __src 配下に配置する。  
+        - src/unitService/__src/user_cell_create.js  
+    1. サービスの実行権限（例： allユーザにRead）を設定する。  
+        1. メインBox配下に移動  
+        1. unitServerを選択（チェックを入れる）  
+        1. ACL Settings の編集アイコンをクリックし、all (anyone)の実行権限をExecに設定する  
+        1. Saveボタンをクリックして設定を有効にする  
+        正しい設定したの画面  
+        ![unitService's permission](./doc/unitService_Permission.PNG)  
+    1. サービスパス（user_cell_create）の設定。  
+        1. メインBox配下に移動  
+        1. unitServerを選択（チェックを入れる）  
+        1. 表の左上のConfiugreメニューをクリック  
+        1. サービスパス (user_cell_create) とファイル (user_cell_create.js)を指定する  
+        ![Configure service](./doc/ServiceConfigurationDialog.PNG)  
+        1. Registerボタンをクリックして設定を登録する  
+        正しい設定したの画面  
+        ![Service path registered](./doc/ServiceConfigurationDialog_Registered.PNG) 
+1. Personal Cell Creatorを適用後のメインBoxのフォルダ構成。  
+![main box](./doc/mainBox_folderStructure.PNG)  
+1. 以下にアクセスする
 
 ```
 {UnitAdminCellのURL}/__/create.html
