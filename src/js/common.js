@@ -49,8 +49,6 @@ i18next
     }, function(err, t) {
         initJqueryI18next();
         
-        // start localizing, details:
-        // https://github.com/i18next/jquery-i18next#usage-of-selector-function
         updateContent();
     });
 
@@ -62,7 +60,10 @@ function initJqueryI18next() {
     // https://github.com/i18next/jquery-i18next#initialize-the-plugin
     jqueryI18next.init(i18next, $);
 }
+
 function updateContent() {
+    // start localizing, details:
+    // https://github.com/i18next/jquery-i18next#usage-of-selector-function
     $('title').localize();
     $('[data-i18n]').localize();
 }
