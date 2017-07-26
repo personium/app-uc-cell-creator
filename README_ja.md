@@ -15,10 +15,10 @@
 1. 上記UnitAdminアカウントのパスワード (targetUnitAdminAccountPassword)
 
 ### 手順
-一部の作業はUnitManagerで実施必要です。  
+一部の作業はUnitManagerでの実施が必要です。  
 
 1. 下記を実施してClientモジュールを適用してください。  
-    1. [Clientスクリプト](./src/js/common.js)に上記必要な情報の環境依存値を設定する。  
+    1. [Clientスクリプト](./src/js/common.js)に上記「必要な情報」の環境依存値を設定する。  
         - deployedDomainName  
         - deployedCellName  
     1. src フォルダ配下のファイル（下記と同じフォルダ構成で）をメインBox配下に配置する。  
@@ -31,10 +31,10 @@
         1. メインBox配下に移動  
         1. ACL Settings の編集アイコンをクリックし、all (anyone)のアクセス権限をReadに設定する  
         1. Saveボタンをクリックして設定を有効にする    
-        正しい設定したの画面  
+        正しい設定をした画面  
         ![Main box's permission](./doc/main_Permission.PNG)  
 1. 下記を実施してEngineスクリプトを適用してください。  
-    1. [Engineスクリプト](./src/unitService/__src/user_cell_create.js)に上記必要な情報の環境依存値を設定する。  
+    1. [Engineスクリプト](./src/unitService/__src/user_cell_create.js)に上記「必要な情報」の環境依存値を設定する。  
         - targetDomainName (deployedDomainNameを流用)  
         - targetUnitAdminCellName  
         - targetUnitAdminAccountName  
@@ -48,7 +48,7 @@
         1. unitServerを選択（チェックを入れる）  
         1. ACL Settings の編集アイコンをクリックし、all (anyone)の実行権限をExecに設定する  
         1. Saveボタンをクリックして設定を有効にする  
-        正しい設定したの画面  
+        正しい設定をした画面  
         ![unitService's permission](./doc/unitService_Permission.PNG)  
     1. サービスパス（user_cell_create）の設定。  
         1. メインBox配下に移動  
@@ -57,7 +57,7 @@
         1. サービスパス (user_cell_create) とファイル (user_cell_create.js)を指定する  
         ![Configure service](./doc/ServiceConfigurationDialog.PNG)  
         1. Registerボタンをクリックして設定を登録する  
-        正しい設定したの画面  
+        正しい設定をした画面  
         ![Service path registered](./doc/ServiceConfigurationDialog_Registered.PNG) 
 1. Personal Cell Creatorを適用後のメインBoxのフォルダ構成。  
 ![main box](./doc/mainBox_FolderStructure.PNG)  
