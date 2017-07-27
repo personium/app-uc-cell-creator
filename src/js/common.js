@@ -35,21 +35,38 @@ var targetRootUrl = rootUrl;
 var serviceCellUrl = [rootUrl, deployedCellName, "/"].join("");
 var createCellApiUrl = [serviceCellUrl, "__/unitService/user_cell_create"].join("");
 
-i18n
-//    .use(i18nextXHRBackend)
-//    .use(i18nextBrowserLanguageDetector)
+i18next
+    .use(i18nextXHRBackend)
+    .use(i18nextBrowserLanguageDetector)
     .init({
         fallbackLng: 'en',
         debug: true,
         backend: {
             // load from i18next-gitbook repo
-        loadPath: './locales/{{lng}}/translation.json',
-        crossDomain: true
+            loadPath: './locales/{{lng}}/translation.json',
+            crossDomain: true
         }
     }, function(err, t) {
-        $("title").i18n();
-        $(".i18n").i18n();
+        initJqueryI18next();
+        
+        updateContent();
     });
+
+/*
+ * Need to move to a function to avoid conflicting with the i18nextBrowserLanguageDetector initialization.
+ */
+function initJqueryI18next() {
+    // for options see
+    // https://github.com/i18next/jquery-i18next#initialize-the-plugin
+    jqueryI18next.init(i18next, $);
+}
+
+function updateContent() {
+    // start localizing, details:
+    // https://github.com/i18next/jquery-i18next#usage-of-selector-function
+    $('title').localize();
+    $('[data-i18n]').localize();
+}
 
 $(document).ready(function() {
     $("#register").prop("disabled", true);
@@ -59,7 +76,7 @@ function checkCellExis() {
     var cellName = $("#iCellName").val();
     if (cellName) {
         getCell(cellName).done(function(data, status, xhr) {
-            $("#iCellNameMsg").html(i18n.t("create_form.msg.error.cell_already_exist"));
+            $("#iCellNameMsg").html(i18next.t("create_form.msg.error.cell_already_exist"));
         }).fail(function(data) {
             $("#iCellNameMsg").html("");
             checkInput("iCellName", "iCellNameMsg");
@@ -93,12 +110,12 @@ function checkInput(id, msgId) {
 function createCell() {
     createCellAPI().done(function(data) {
         setMainBoxACL(data.access_token).done(function(data) {
-            displaySuccessMsg(i18n.t("create_form.msg.info.cell_created"));
+            displaySuccessMsg(i18next.t("create_form.msg.info.cell_created"));
         }).fail(function(data) {
-            displaySuccessMsg(i18n.t("create_form.msg.info.private_profile_cell_created"));
+            displaySuccessMsg(i18next.t("create_form.msg.info.private_profile_cell_created"));
         });
     }).fail(function(data) {
-        displayFailureMsg(i18n.t("create_form.msg.error.fail_to_create_cell"));
+        displayFailureMsg(i18next.t("create_form.msg.error.fail_to_create_cell"));
     });
 }
 
@@ -125,7 +142,7 @@ function validateCheck(displayNameID, formFieldMsgId) {
 
     $("#" + formFieldMsgId).empty();
     if(lenDisplayName < MINLENGTH || displayName == undefined || displayName == null || displayName == "") {
-        $("#" + formFieldMsgId).html(i18n.t("create_form.validate.warning.less_minimum_length", { value: MINLENGTH}));
+        $("#" + formFieldMsgId).html(i18next.t("create_form.validate.warning.less_minimum_length", { value: MINLENGTH}));
         return false;
     }
 
@@ -141,16 +158,16 @@ function isCellNameValid(str, formFieldMsgId) {
         // cell name is valid
         return true;
     } else if (str.length > MAXLENGTH) {
-        $("#" + formFieldMsgId).html(i18n.t("create_form.validate.warning.exceed_maximum_length", { value: MAXLENGTH}));
+        $("#" + formFieldMsgId).html(i18next.t("create_form.validate.warning.exceed_maximum_length", { value: MAXLENGTH}));
         return false;
     } else if (str.match(multibyteChar)) {
-        $("#" + formFieldMsgId).html(i18n.t("create_form.validate.warning.multibyte_not_allowed"));
+        $("#" + formFieldMsgId).html(i18next.t("create_form.validate.warning.multibyte_not_allowed"));
         return false;
     } else if (str.match(startWithAllowedSymbols)) {
-        $("#" + formFieldMsgId).html(i18n.t("create_form.validate.warning.cannot_start_with_symbol"));
+        $("#" + formFieldMsgId).html(i18next.t("create_form.validate.warning.cannot_start_with_symbol"));
         return false;
     } else {
-        $("#" + formFieldMsgId).html(i18n.t("create_form.validate.warning.unsupported_symbols"));
+        $("#" + formFieldMsgId).html(i18next.t("create_form.validate.warning.unsupported_symbols"));
         return false;
     }
 };

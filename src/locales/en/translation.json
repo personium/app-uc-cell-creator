@@ -9,8 +9,8 @@
         "ok_button": "Create",
         "validate": {
             "warning": {
-                "less_minimum_length": "Please enter at least __value__ character(s).",
-                "exceed_maximum_length": "Please enter __value__ characters or less.",
+                "less_minimum_length": "Please enter at least {{value}} character(s).",
+                "exceed_maximum_length": "Please enter {{value}} characters or less.",
                 "multibyte_not_allowed": "Multibyte characters are not allowed.",
                 "cannot_start_with_symbol": "Cannot start with symbols.",
                 "unsupported_symbols": "Please do not use unsupported symbol(s)."
