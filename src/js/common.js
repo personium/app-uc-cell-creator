@@ -69,6 +69,8 @@ function updateContent() {
 }
 
 $(document).ready(function() {
+    $("#iAccName").on("keyup blur", function(event){checkInput('iAccName', 'iAccNameMsg');});
+    $("#iAccPw").on("keyup blur", function(event){checkInput('iAccPw', 'iAccPwMsg');});
     $("#register").prop("disabled", true);
 });
 
