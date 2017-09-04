@@ -19,7 +19,10 @@
         "msg": {
             "info": {
                 "cell_created": "Cell successfully created.",
-                "private_profile_cell_created": "$t(create_form.msg.info.cell_created) However cell's profile is private."
+                "private_profile_cell_created": "$t(create_form.msg.info.cell_created) However cell's profile is private.",
+                "cellName": "Must be 128 characters or less and start with alphanumeric and the rest contains alphanumeric, underscores or hyphens",
+                "adminName": "Please do not use unsupported symbol(s).",
+                "cellName": "Must be 6 - 32 characters and contains alphanumeric, underscores or hyphens"
             },
             "error": {
                 "fail_to_create_cell": "Failed to create a cell.",
