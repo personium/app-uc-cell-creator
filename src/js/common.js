@@ -35,78 +35,200 @@ var targetRootUrl = rootUrl;
 var serviceCellUrl = [rootUrl, deployedCellName, "/"].join("");
 var createCellApiUrl = [serviceCellUrl, "__/unitService/user_cell_create"].join("");
 
-i18next
-    .use(i18nextXHRBackend)
-    .use(i18nextBrowserLanguageDetector)
-    .init({
-        fallbackLng: 'en',
-        debug: true,
-        backend: {
-            // load from i18next-gitbook repo
-            loadPath: './locales/{{lng}}/translation.json',
-            crossDomain: true
-        }
-    }, function(err, t) {
-        initJqueryI18next();
-        
-        updateContent();
-    });
+/*
+ * The followings should be shared among applications and/or within the same application.
+ */
+$(document).ready(function() {
+    i18next
+        .use(i18nextXHRBackend)
+        .use(i18nextBrowserLanguageDetector)
+        .init({
+            fallbackLng: 'en',
+            debug: true,
+            backend: {
+                // load from i18next-gitbook repo
+                loadPath: './locales/{{lng}}/translation.json',
+                crossDomain: true
+            }
+        }, function(err, t) {
+            initJqueryI18next();
+            
+            // define your own additionalCallback for each App/screen
+            if ((typeof additionalCallback !== "undefined") && $.isFunction(additionalCallback)) {
+                additionalCallback();
+            }
+
+            updateContent();
+        });
+});
 
 /*
  * Need to move to a function to avoid conflicting with the i18nextBrowserLanguageDetector initialization.
  */
-function initJqueryI18next() {
+initJqueryI18next = function() {
     // for options see
     // https://github.com/i18next/jquery-i18next#initialize-the-plugin
-    jqueryI18next.init(i18next, $);
+    jqueryI18next.init(i18next, $, {
+        useOptionsAttr: true
+    });
 }
 
-function updateContent() {
+updateContent = function() {
     // start localizing, details:
     // https://github.com/i18next/jquery-i18next#usage-of-selector-function
-    $('title').localize();
     $('[data-i18n]').localize();
 }
 
-$(document).ready(function() {
-    $("#iAccName").on("keyup blur", function(event){checkInput('iAccName', 'iAccNameMsg');});
-    $("#iAccPw").on("keyup blur", function(event){checkInput('iAccPw', 'iAccPwMsg');});
-    $("#register").prop("disabled", true);
-});
+var validator = null;
+var jqueryValidateMessage_ja = "https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_ja.js";
+
+additionalCallback = function() {
+    disableCreateBtn();
+
+    configureJQueryValidation();
+};
+
+configureJQueryValidation = function() {
+    createExtraRules();
+
+    switch(i18next.language) {
+    case "ja":
+    case "ja-JP":
+        $.getScript(jqueryValidateMessage_ja, function() {
+            configureTarget();
+        });
+        break;
+    default:
+        configureTarget();
+    }
+};
+
+configureTarget = function() {
+    validator = $("form").validate({
+        rules: {
+            cell_name: {
+                required: true,
+                cellName: true,
+                rangelength: [1, 128]
+            },
+            admin_name: {
+                required: true,
+                adminName: true,
+                rangelength: [1, 128]
+                
+            },
+            password: {
+                required: true,
+                adminPassword: true,
+                rangelength: [6, 32]
+            },
+            confirm_password: {
+                required: true,
+                equalTo: "#password",
+                adminPassword: true,
+                rangelength: [6, 32]
+            }
+        },
+        errorPlacement: function(error, element) {
+            element.parent().find('.errorMsg').html($(error));
+        },
+        // get called whenever a field is invalid
+        highlight: function(element, errorClass) {
+            console.log("inside highlight " + $(element).attr("id"));
+            disableCreateBtn();
+        },
+        // get called whenever a field becomes valid
+        unhighlight: function(element, errorClass) {
+            console.log("inside unhighlight " + $(element).attr("id"));
+            checkInput();
+        },
+        // get called when submit button is clicked and values are invalid
+        invalidHandler: function(event, validator) {
+            var errors = validator.numberOfInvalids();
+            console.log("invalidHandler:There are " + errors + " errors!");
+            checkInput();
+        },
+        submitHandler: function(form) {
+            console.log("submitHandler");
+            createCell();
+            return false;
+        }
+    });
+};
+
+createExtraRules = function() {
+    $.validator.addMethod("cellName", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9][a-zA-Z0-9-_]{0,127}$/.test(value);
+    }, i18next.t("create_form.msg.info.cellName"));
+    $.validator.addMethod("adminName", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9][a-zA-Z0-9-_!$*=^`{|}~.@]{0,127}$/.test(value);
+    }, i18next.t("create_form.msg.info.adminName"));
+    $.validator.addMethod("adminPassword", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9-_]{0,}$/.test(value);
+    }, i18next.t("create_form.msg.info.adminPassword"));
+};
+
+verifyCellName = function() {
+    console.log("verifyCellName");
+    if ($("#cell_name").valid()) {
+        checkCellExis();
+    }
+};
 
 function checkCellExis() {
-    var cellName = $("#iCellName").val();
+    console.log("checkCellExis");
+    var cellName = $("#cell_name").val();
     if (cellName) {
         getCell(cellName).done(function(data, status, xhr) {
-            $("#iCellNameMsg").html(i18next.t("create_form.msg.error.cell_already_exist"));
+            showErrorsCellName();
+            disableCreateBtn();
         }).fail(function(data) {
-            $("#iCellNameMsg").html("");
-            checkInput("iCellName", "iCellNameMsg");
+            $("#cell_name_error_msg").empty();
+            checkInput();
         });
     } else {
-        $("#register").prop("disabled", true);
+        disableCreateBtn();
     }
 }
 
-function checkInput(id, msgId) {
-    validateCheck(id, msgId);
-    var cellName = $("#iCellName").val();
-    var accName = $("#iAccName").val();
-    var accPass = $("#iAccPw").val();
-    var cellMsg = $("#iCellNameMsg").html();
-    var accNMsg = $("#iAccNameMsg").html();
-    var accPMsg = $("#iAccPwMsg").html();
-    if (!cellName || !accName || !accPass || cellMsg || accNMsg || accPMsg) {
-        $("#register").prop("disabled", true);
-        $("#register").removeClass("login_btn");
-        $("#register").removeClass("login_btn_b");
-        $("#register").toggleClass("login_btn_b");
+/*
+ * Need to tell jQuery Validation that the field is invalid so that
+ * validator.numberOfInvalids() can return the correct count.
+ */
+showErrorsCellName = function() {
+    validator.invalid.cell_name = true;
+    validator.showErrors({
+        "cell_name": i18next.t("create_form.msg.error.cell_already_exist")
+    });
+};
+
+function checkInput() {
+    var someFieldsMissingValue = _.some(
+        $("form input"),
+        function(aDom) { 
+            return _.isEmpty($(aDom).val());
+        }
+    );
+    var someErrors = validator.numberOfInvalids();
+    if (someFieldsMissingValue || someErrors > 0) {
+        disableCreateBtn();
     } else {
-        $("#register").prop("disabled", false);
-        $("#register").removeClass("login_btn");
-        $("#register").removeClass("login_btn_b");
-        $("#register").toggleClass("login_btn");
+        enableCreateBtn();
     }
+}
+
+function enableCreateBtn() {
+    $("#register")
+        .prop("disabled", false)
+        .removeClass("login_btn_b")
+        .addClass("login_btn");
+}
+
+function disableCreateBtn() {
+    $("#register")
+        .prop("disabled", true)
+        .removeClass("login_btn")
+        .addClass("login_btn_b");
 }
 
 function createCell() {
@@ -135,53 +257,14 @@ function displayFailureMsg(msg) {
                  .show();
 }
 
-function validateCheck(displayNameID, formFieldMsgId) {
-    var displayName = $("#" + displayNameID).val();
-    var MINLENGTH = 1;
-    var MAXLENGTH = 128;
-    var allowedLetters = /^[0-9a-zA-Z-_]+$/;
-    var lenDisplayName = displayName.length;
-
-    $("#" + formFieldMsgId).empty();
-    if(lenDisplayName < MINLENGTH || displayName == undefined || displayName == null || displayName == "") {
-        $("#" + formFieldMsgId).html(i18next.t("create_form.validate.warning.less_minimum_length", { value: MINLENGTH}));
-        return false;
-    }
-
-    return isCellNameValid(displayName, formFieldMsgId);
-};
-
-function isCellNameValid(str, formFieldMsgId) {
-    var validCellName = /^([a-zA-Z0-9]([a-zA-Z0-9\-\_]){0,127})?$/g;
-    var MAXLENGTH = 128;
-    var multibyteChar = /[^\x00-\x7F]+/g;
-    var startWithAllowedSymbols = /^[-_]/;
-    if (str.match(validCellName)) {
-        // cell name is valid
-        return true;
-    } else if (str.length > MAXLENGTH) {
-        $("#" + formFieldMsgId).html(i18next.t("create_form.validate.warning.exceed_maximum_length", { value: MAXLENGTH}));
-        return false;
-    } else if (str.match(multibyteChar)) {
-        $("#" + formFieldMsgId).html(i18next.t("create_form.validate.warning.multibyte_not_allowed"));
-        return false;
-    } else if (str.match(startWithAllowedSymbols)) {
-        $("#" + formFieldMsgId).html(i18next.t("create_form.validate.warning.cannot_start_with_symbol"));
-        return false;
-    } else {
-        $("#" + formFieldMsgId).html(i18next.t("create_form.validate.warning.unsupported_symbols"));
-        return false;
-    }
-};
-
 function createCellAPI() {
     return $.ajax({
         type:"POST",
         url: createCellApiUrl, // unitService engine URL (where this service is deployed)
         data: {
-            'cellName':$("#iCellName").val(),
-            'accName':$("#iAccName").val(),
-            'accPass':$("#iAccPw").val()
+            'cellName':$("#cell_name").val(),
+            'accName':$("#admin_name").val(),
+            'accPass':$("#password").val()
         },
         headers: {
             'Accept':'application/json'
@@ -190,7 +273,7 @@ function createCellAPI() {
 }
 
 function setMainBoxACL(token) {
-    var cellName = $("#iCellName").val();
+    var cellName = $("#cell_name").val();
     return $.ajax({
         type: "ACL",
         url: targetRootUrl + cellName + "/__/", // Target Personium URL (can be another Personium server)

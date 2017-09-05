@@ -7,10 +7,12 @@
   <title data-i18n="title">Personal Cell Creator</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next/8.4.3/i18next.min.js"></script>
   <script src="https://unpkg.com/i18next-xhr-backend/i18nextXHRBackend.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-browser-languagedetector/2.0.0/i18nextBrowserLanguageDetector.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-i18next/1.2.0/jquery-i18next.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link href='https://fonts.googleapis.com/css?family=Raleway:400,200' rel='stylesheet' type='text/css'>
   <link href="./css/common.css" rel="stylesheet" type="text/css">
@@ -19,19 +21,23 @@
 <body>
   <section class="login-section">
     <div data-i18n="create_form.description">Fill in the necessary information to create a new cell.</div>
-    <form onSubmit="createCell();return false;">
+    <form>
       <div class="login-form-controls">
         <div>
-          <input id="iCellName" type="text" data-i18n="[placeholder]create_form.cell_name" value="" onblur="checkCellExis();" />
-          <p id="iCellNameMsg" class="errorMsg"></p>
+          <input id="cell_name" name="cell_name" type="text" data-i18n="[placeholder]create_form.cell_name" value="" onblur="verifyCellName()"/>
+          <p id="cell_name_error_msg" class="errorMsg"></p>
         </div>
         <div>
-          <input id="iAccName" type="text" data-i18n="[placeholder]create_form.account_name" value="">
-          <p id="iAccNameMsg" class="errorMsg"></p>
+          <input id="admin_name" name="admin_name" type="text" data-i18n="[placeholder]create_form.account_name" value="">
+          <p class="errorMsg"></p>
         </div>
         <div>
-          <input id="iAccPw" type="password" data-i18n="[placeholder]create_form.password" value="">
-          <p id="iAccPwMsg" class="errorMsg"></p>
+          <input id="password" name="password" type="password" data-i18n="[placeholder]create_form.password" value="">
+          <p class="errorMsg"></p>
+        </div>
+        <div>
+          <input id="confirm_password" name="confirm_password" type="password" data-i18n="[placeholder]create_form.confirm_password" value="">
+          <p class="errorMsg"></p>
         </div>
         <div>
           <button type="submit" class="login_btn_b round-btn" id="register" data-i18n="create_form.ok_button">Create</button>
