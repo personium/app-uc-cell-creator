@@ -219,16 +219,12 @@ function checkInput() {
 
 function enableCreateBtn() {
     $("#register")
-        .prop("disabled", false)
-        .removeClass("login_btn_b")
-        .addClass("login_btn");
+        .prop("disabled", false);
 }
 
 function disableCreateBtn() {
     $("#register")
-        .prop("disabled", true)
-        .removeClass("login_btn")
-        .addClass("login_btn_b");
+        .prop("disabled", true);
 }
 
 function createCell() {
