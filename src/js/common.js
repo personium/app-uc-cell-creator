@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+var Common = Common || {};
 /*
  * Replace the "***" with a valid Personium domain name
  */
@@ -229,7 +230,10 @@ function disableCreateBtn() {
 
 function createCell() {
     createCellAPI().done(function(data) {
+        Common.access_token = data.access_token;
         setMainBoxACL(data.access_token).done(function(data) {
+            installHomeApplicationBox();
+            uploadDefaultProfile();
             displaySuccessMsg(i18next.t("create_form.msg.info.cell_created"));
         }).fail(function(data) {
             displaySuccessMsg(i18next.t("create_form.msg.info.private_profile_cell_created"));
@@ -290,3 +294,58 @@ function getCell(cellName) {
         }
     });
 }
+
+uploadDefaultProfile = function() {
+    var newlyCreatedCellUrl = targetRootUrl + $("#cell_name").val();
+
+    getProfile().done(function(profData){
+        $.ajax({
+            type: "PUT",
+            url: newlyCreatedCellUrl + '/__/profile.json',
+            data: JSON.stringify(profData),
+            headers: {'Accept':'application/json',
+                      'Authorization':'Bearer ' + Common.access_token}
+        })
+    });
+};
+
+getProfile = function() {
+    var homeApplicationURL = "https://demo.personium.io/HomeApplication/";
+
+    return $.ajax({
+        type: "GET",
+        url: homeApplicationURL + '__/defaultProfile.json',
+        dataType: 'json',
+        headers: {'Accept':'application/json'}
+    });
+};
+
+installHomeApplicationBox = function() {
+    var newlyCreatedCellUrl = targetRootUrl + $("#cell_name").val();
+    var barFilePath = "https://demo.personium.io/HomeApplication/__/HomeApplication.bar";
+    var oReq = new XMLHttpRequest(); // binary
+    oReq.open("GET", barFilePath);
+    oReq.responseType = "arraybuffer";
+    oReq.setRequestHeader("Content-Type", "application/zip");
+    oReq.onload = function(e) {
+        var arrayBuffer = oReq.response;
+        var view = new Uint8Array(arrayBuffer);
+        var blob = new Blob([view], {"type":"application/zip"});
+        $.ajax({
+            type: "MKCOL",
+            url: newlyCreatedCellUrl + '/io_personium_demo_HomeApplication' + '/',
+            data: blob,
+            processData: false,
+            headers: {
+                'Authorization':'Bearer ' + Common.access_token, // createCellAPI's token
+                'Content-type':'application/zip'
+            }
+        }).done(function(data) {
+            // domesomething
+        }).fail(function(data) {
+            var res = JSON.parse(data.responseText);
+            alert("An error has occurred.\n" + res.message.value);
+        });
+    }
+    oReq.send();
+};
