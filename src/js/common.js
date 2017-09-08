@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-var Common = Common || {};
 /*
  * Replace the "***" with a valid Personium domain name
  */
@@ -230,15 +228,15 @@ function disableCreateBtn() {
 
 function createCell() {
     createCellAPI().done(function(data) {
-        Common.access_token = data.access_token;
-        setMainBoxACL(data.access_token).done(function(data) {
-            installHomeApplicationBox();
-            uploadDefaultProfile();
+        let access_token = data.access_token;
+        setMainBoxACL(access_token).done(function() {
+            installHomeApplicationBox(access_token);
+            uploadDefaultProfile(access_token);
             displaySuccessMsg(i18next.t("create_form.msg.info.cell_created"));
-        }).fail(function(data) {
+        }).fail(function() {
             displaySuccessMsg(i18next.t("create_form.msg.info.private_profile_cell_created"));
         });
-    }).fail(function(data) {
+    }).fail(function() {
         displayFailureMsg(i18next.t("create_form.msg.error.fail_to_create_cell"));
     });
 }
@@ -295,7 +293,7 @@ function getCell(cellName) {
     });
 }
 
-uploadDefaultProfile = function() {
+uploadDefaultProfile = function(token) {
     var newlyCreatedCellUrl = targetRootUrl + $("#cell_name").val();
 
     getProfile().done(function(profData){
@@ -304,7 +302,7 @@ uploadDefaultProfile = function() {
             url: newlyCreatedCellUrl + '/__/profile.json',
             data: JSON.stringify(profData),
             headers: {'Accept':'application/json',
-                      'Authorization':'Bearer ' + Common.access_token}
+                      'Authorization':'Bearer ' + token}
         })
     });
 };
@@ -320,7 +318,7 @@ getProfile = function() {
     });
 };
 
-installHomeApplicationBox = function() {
+installHomeApplicationBox = function(token) {
     var newlyCreatedCellUrl = targetRootUrl + $("#cell_name").val();
     var barFilePath = "https://demo.personium.io/HomeApplication/__/HomeApplication.bar";
     var oReq = new XMLHttpRequest(); // binary
@@ -337,7 +335,7 @@ installHomeApplicationBox = function() {
             data: blob,
             processData: false,
             headers: {
-                'Authorization':'Bearer ' + Common.access_token, // createCellAPI's token
+                'Authorization':'Bearer ' + token, // createCellAPI's token
                 'Content-type':'application/zip'
             }
         }).done(function(data) {
