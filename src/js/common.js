@@ -33,6 +33,48 @@ var rootUrl = ["https://", deployedDomainName, "/"].join("");
 var targetRootUrl = rootUrl;
 var serviceCellUrl = [rootUrl, deployedCellName, "/"].join("");
 var createCellApiUrl = [serviceCellUrl, "__/unitService/user_cell_create"].join("");
+var HomeApplication = {
+    cellUrl: "https://demo.personium.io/HomeApplication/",
+    defaultProfileUrl: function() {
+        return this.cellUrl + '__/defaultProfile.json';
+    },
+    barfilePath: function() {
+        return this.cellUrl + '__/HomeApplication.bar';
+    },
+    targetBoxPath: function() {
+        return targetRootUrl + $("#cell_name").val() + '/io_personium_demo_HomeApplication/';
+    },
+    loginUrl: function() {
+        return targetRootUrl + $("#cell_name").val() + '/io_personium_demo_HomeApplication/src/login.html';
+    },
+    installHomeApplicationBox: function(token) {
+        var oReq = new XMLHttpRequest(); // binary
+        oReq.open("GET", this.barfilePath());
+        oReq.responseType = "arraybuffer";
+        oReq.setRequestHeader("Content-Type", "application/zip");
+        oReq.onload = function(e) {
+            var arrayBuffer = oReq.response;
+            var view = new Uint8Array(arrayBuffer);
+            var blob = new Blob([view], {"type":"application/zip"});
+            $.ajax({
+                type: "MKCOL",
+                url: HomeApplication.targetBoxPath(),
+                data: blob,
+                processData: false,
+                headers: {
+                    'Authorization':'Bearer ' + token, // createCellAPI's token
+                    'Content-type':'application/zip'
+                }
+            }).done(function(data) {
+                // domesomething
+            }).fail(function(data) {
+                var res = JSON.parse(data.responseText);
+                alert("An error has occurred.\n" + res.message.value);
+            });
+        }
+        oReq.send();
+    }
+};
 
 /*
  * The followings should be shared among applications and/or within the same application.
@@ -229,12 +271,19 @@ function disableCreateBtn() {
 function createCell() {
     createCellAPI().done(function(data) {
         let access_token = data.access_token;
+        let userProfileUrl = [
+            targetRootUrl,
+            $("#cell_name").val(),
+            '/__/profile.json'
+        ].join("");
         setMainBoxACL(access_token).done(function() {
-            installHomeApplicationBox(access_token);
-            uploadDefaultProfile(access_token);
+            HomeApplication.installHomeApplicationBox(access_token);
+            uploadDefaultProfile(access_token, HomeApplication.defaultProfileUrl(), userProfileUrl);
             displaySuccessMsg(i18next.t("create_form.msg.info.cell_created"));
         }).fail(function() {
             displaySuccessMsg(i18next.t("create_form.msg.info.private_profile_cell_created"));
+        }).always(function() {
+            $("#dispMsg").append($(createQRCodeImg(HomeApplication.loginUrl())));
         });
     }).fail(function() {
         displayFailureMsg(i18next.t("create_form.msg.error.fail_to_create_cell"));
@@ -293,13 +342,11 @@ function getCell(cellName) {
     });
 }
 
-uploadDefaultProfile = function(token) {
-    var newlyCreatedCellUrl = targetRootUrl + $("#cell_name").val();
-
-    getProfile().done(function(profData){
+uploadDefaultProfile = function(token, defaultProfileUrl, userProfileUrl) {
+    getProfile(defaultProfileUrl).done(function(profData){
         $.ajax({
             type: "PUT",
-            url: newlyCreatedCellUrl + '/__/profile.json',
+            url: userProfileUrl,
             data: JSON.stringify(profData),
             headers: {'Accept':'application/json',
                       'Authorization':'Bearer ' + token}
@@ -307,43 +354,24 @@ uploadDefaultProfile = function(token) {
     });
 };
 
-getProfile = function() {
-    var homeApplicationURL = "https://demo.personium.io/HomeApplication/";
-
+getProfile = function(url) {
     return $.ajax({
         type: "GET",
-        url: homeApplicationURL + '__/defaultProfile.json',
+        url: url,
         dataType: 'json',
         headers: {'Accept':'application/json'}
     });
 };
 
-installHomeApplicationBox = function(token) {
-    var newlyCreatedCellUrl = targetRootUrl + $("#cell_name").val();
-    var barFilePath = "https://demo.personium.io/HomeApplication/__/HomeApplication.bar";
-    var oReq = new XMLHttpRequest(); // binary
-    oReq.open("GET", barFilePath);
-    oReq.responseType = "arraybuffer";
-    oReq.setRequestHeader("Content-Type", "application/zip");
-    oReq.onload = function(e) {
-        var arrayBuffer = oReq.response;
-        var view = new Uint8Array(arrayBuffer);
-        var blob = new Blob([view], {"type":"application/zip"});
-        $.ajax({
-            type: "MKCOL",
-            url: newlyCreatedCellUrl + '/io_personium_demo_HomeApplication' + '/',
-            data: blob,
-            processData: false,
-            headers: {
-                'Authorization':'Bearer ' + token, // createCellAPI's token
-                'Content-type':'application/zip'
-            }
-        }).done(function(data) {
-            // domesomething
-        }).fail(function(data) {
-            var res = JSON.parse(data.responseText);
-            alert("An error has occurred.\n" + res.message.value);
-        });
-    }
-    oReq.send();
+createQRCodeImg = function(url) {
+    let googleAPI = 'https://chart.googleapis.com/chart?cht=qr&chs=177x177&chl=';
+    let qrURL = googleAPI + url;
+    let aDiv = $('<div>').append(
+        '<br>',
+        $('<img>', {
+            src: qrURL,
+            style: 'width: 200px; height: 200px'
+        })
+    );
+    return aDiv;
 };
