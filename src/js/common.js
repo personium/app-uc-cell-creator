@@ -277,12 +277,12 @@ function createCell() {
             '/__/profile.json'
         ].join("");
         setMainBoxACL(access_token).done(function() {
-            HomeApplication.installHomeApplicationBox(access_token);
-            uploadDefaultProfile(access_token, HomeApplication.defaultProfileUrl(), userProfileUrl);
             displaySuccessMsg(i18next.t("create_form.msg.info.cell_created"));
         }).fail(function() {
             displaySuccessMsg(i18next.t("create_form.msg.info.private_profile_cell_created"));
         }).always(function() {
+            HomeApplication.installHomeApplicationBox(access_token);
+            uploadDefaultProfile(access_token, HomeApplication.defaultProfileUrl(), userProfileUrl);
             $("#dispMsg").append($(createQRCodeImg(HomeApplication.loginUrl())));
         });
     }).fail(function() {
@@ -370,6 +370,7 @@ createQRCodeImg = function(url) {
         '<br>',
         $('<img>', {
             src: qrURL,
+            alt: url,
             style: 'width: 200px; height: 200px'
         })
     );
