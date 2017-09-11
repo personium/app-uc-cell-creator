@@ -124,6 +124,8 @@ var validator = null;
 var jqueryValidateMessage_ja = "https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_ja.js";
 
 additionalCallback = function() {
+    appendCommonDialog();
+    
     disableCreateBtn();
 
     configureJQueryValidation();
@@ -277,13 +279,13 @@ function createCell() {
             '/__/profile.json'
         ].join("");
         setMainBoxACL(access_token).done(function() {
-            displaySuccessMsg(i18next.t("create_form.msg.info.cell_created"));
+            openCommonDialog('resultDialog.title', 'create_form.msg.info.cell_created');
         }).fail(function() {
-            displaySuccessMsg(i18next.t("create_form.msg.info.private_profile_cell_created"));
+            openCommonDialog('resultDialog.title', 'create_form.msg.info.private_profile_cell_created');
         }).always(function() {
             HomeApplication.installHomeApplicationBox(access_token);
             uploadDefaultProfile(access_token, HomeApplication.defaultProfileUrl(), userProfileUrl);
-            $("#dispMsg").append($(createQRCodeImg(HomeApplication.loginUrl())));
+            $("#modal-common .modal-body").append($(createQRCodeImg(HomeApplication.loginUrl())));
         });
     }).fail(function() {
         displayFailureMsg(i18next.t("create_form.msg.error.fail_to_create_cell"));
@@ -375,4 +377,50 @@ createQRCodeImg = function(url) {
         })
     );
     return aDiv;
+};
+
+appendCommonDialog = function() {
+    var html = [
+        '<div id="modal-common" class="modal fade" role="dialog" data-backdrop="static">',
+            '<div class="modal-dialog">',
+                '<div class="modal-content">',
+                    '<div class="modal-header login-header">',
+                        '<h4 class="modal-title"></h4>',
+                    '</div>',
+                    '<div class="modal-body"></div>',
+                    '<div class="modal-footer">',
+                        '<button type="button" class="btn btn-primary" id="b-common-ok" data-i18n="btnOk">OK</button>',
+                    '</div>',
+               '</div>',
+           '</div>',
+        '</div>'
+    ].join("");
+    $("body").append(html);
+    $('#b-common-ok').on('click', function() { 
+        closeTab();
+    });
+};
+
+openCommonDialog = function(title_key, message_key) {
+    $("#modal-common .modal-title")
+        .attr('data-i18n', title_key);
+
+    $("#modal-common .modal-body")
+        .attr('data-i18n', '[html]' + message_key);
+
+    $("#modal-common")
+        .localize()
+        .modal('show');
+};
+
+/*
+ * clean up data and close tab/window
+ */
+closeTab = function() {
+    // define your own cleanupData for each App/screen
+    if ((typeof cleanUpData !== "undefined") && $.isFunction(cleanUpData)) {
+        cleanUpData();
+    }
+    $("#modal-common .modal-body").empty();
+    $("#modal-common").modal('hide');
 };

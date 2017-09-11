@@ -1,5 +1,8 @@
 {
     "title": "利用者払い出し",
+    "resultDialog": {
+        "title": "セルの作成"
+    },
     "create_form": {
         "description": "利用者セルの払い出しを行います。",
         "cell_name": "作成するセル名を入力",
