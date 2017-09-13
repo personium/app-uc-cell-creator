@@ -9,6 +9,14 @@
         "account_name": "作成するアカウント名を入力",
         "password": "作成するアカウントのパスワードを入力",
         "confirm_password": "パスワードの確認入力",
+        "cell_type": {
+            "description": "Cell種別を選択してください",
+            "options": {
+                "Person": "ヒト",
+                "Organization": "組織",
+                "App": "アプリ"
+            }
+        },
         "ok_button": "作成",
         "validate": {
             "warning": {

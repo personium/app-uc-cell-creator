@@ -28,7 +28,8 @@ body{
     margin: 24px 0 30px;
 }
 
-.login-form-controls input {
+.login-form-controls input,
+.login-form-controls select {
     width: 288px;
     padding: 0 16px;
     margin-bottom: 16px;
