@@ -41,7 +41,9 @@ body{
 /*
  * IE hack for line-height
  */
-.login-form-controls input[type=text], .login-form-controls input[type=password] {
+.login-form-controls input[type=text],
+.login-form-controls input[type=password],
+.login-form-controls select {
     height: 40px !important;
 }
 
