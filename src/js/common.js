@@ -35,6 +35,7 @@ var serviceCellUrl = [rootUrl, deployedCellName, "/"].join("");
 var createCellApiUrl = [serviceCellUrl, "__/unitService/user_cell_create"].join("");
 var HomeApplication = {
     cellUrl: "https://demo.personium.io/HomeApplication/",
+    disabledList: ["App"],
     defaultProfileUrl: function() {
         return this.cellUrl + '__/defaultProfile.json';
     },
@@ -46,6 +47,9 @@ var HomeApplication = {
     },
     loginUrl: function() {
         return targetRootUrl + $("#cell_name").val() + '/io_personium_demo_HomeApplication/src/login.html';
+    },
+    enableInstall: function() {
+        return !(_.contains(this.disabledList, $("#cell_type").val()));
     },
     installHomeApplicationBox: function(token) {
         var oReq = new XMLHttpRequest(); // binary
@@ -273,7 +277,7 @@ function disableCreateBtn() {
 function createCell() {
     createCellAPI().done(function(data) {
         let access_token = data.access_token;
-        let userProfileUrl = [
+        let cellProfileUrl = [
             targetRootUrl,
             $("#cell_name").val(),
             '/__/profile.json'
@@ -283,9 +287,17 @@ function createCell() {
         }).fail(function() {
             openCommonDialog('resultDialog.title', 'create_form.msg.info.private_profile_cell_created');
         }).always(function() {
-            HomeApplication.installHomeApplicationBox(access_token);
-            uploadDefaultProfile(access_token, HomeApplication.defaultProfileUrl(), userProfileUrl);
-            $("#modal-common .modal-body").append($(createQRCodeImg(HomeApplication.loginUrl())));
+            $('<input>', {
+                value: $("#cell_name").val(),
+                readonly: true
+            }).appendTo("#modal-common .modal-body");
+
+            uploadDefaultProfile(access_token, HomeApplication.defaultProfileUrl(), cellProfileUrl);
+
+            if (HomeApplication.enableInstall()) {
+                HomeApplication.installHomeApplicationBox(access_token);
+                $("#modal-common .modal-body").append($(createQRCodeImg(HomeApplication.loginUrl())));
+            };
         });
     }).fail(function() {
         displayFailureMsg(i18next.t("create_form.msg.error.fail_to_create_cell"));
@@ -344,12 +356,20 @@ function getCell(cellName) {
     });
 }
 
-uploadDefaultProfile = function(token, defaultProfileUrl, userProfileUrl) {
+uploadDefaultProfile = function(token, defaultProfileUrl, cellProfileUrl) {
     getProfile(defaultProfileUrl).done(function(profData){
+        let cellProfile = $.extend(
+            true,
+            profData,
+            {
+                "CellType": $("#cell_type").val()
+            }
+        );
+
         $.ajax({
             type: "PUT",
-            url: userProfileUrl,
-            data: JSON.stringify(profData),
+            url: cellProfileUrl,
+            data: JSON.stringify(cellProfile),
             headers: {'Accept':'application/json',
                       'Authorization':'Bearer ' + token}
         })

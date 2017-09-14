@@ -38,6 +38,7 @@ body{
     border-radius: 20px;
     color: #333333;
 }
+
 /*
  * IE hack for line-height
  */
@@ -47,7 +48,8 @@ body{
     height: 40px !important;
 }
 
-.login-form-controls input:focus {
+.login-form-controls input:focus,
+.login-form-controls select:focus {
     outline: none;
     border: none;
 }
@@ -78,3 +80,4 @@ body{
 .errorMsg {
     color: red;
 }
+
