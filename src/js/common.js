@@ -33,12 +33,10 @@ var rootUrl = ["https://", deployedDomainName, "/"].join("");
 var targetRootUrl = rootUrl;
 var serviceCellUrl = [rootUrl, deployedCellName, "/"].join("");
 var createCellApiUrl = [serviceCellUrl, "__/unitService/user_cell_create"].join("");
+var defaultProfileUrl = [serviceCellUrl, "__/defaultProfile.json"].join("");
 var HomeApplication = {
     cellUrl: "https://demo.personium.io/HomeApplication/",
     disabledList: ["App"],
-    defaultProfileUrl: function() {
-        return this.cellUrl + '__/defaultProfile.json';
-    },
     barfilePath: function() {
         return this.cellUrl + '__/HomeApplication.bar';
     },
@@ -292,7 +290,7 @@ function createCell() {
                 readonly: true
             }).appendTo("#modal-common .modal-body");
 
-            uploadDefaultProfile(access_token, HomeApplication.defaultProfileUrl(), cellProfileUrl);
+            uploadDefaultProfile(access_token, defaultProfileUrl, cellProfileUrl);
 
             if (HomeApplication.enableInstall()) {
                 HomeApplication.installHomeApplicationBox(access_token);
