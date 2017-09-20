@@ -33,11 +33,10 @@ var rootUrl = ["https://", deployedDomainName, "/"].join("");
 var targetRootUrl = rootUrl;
 var serviceCellUrl = [rootUrl, deployedCellName, "/"].join("");
 var createCellApiUrl = [serviceCellUrl, "__/unitService/user_cell_create"].join("");
+var defaultProfileUrl = [serviceCellUrl, "__/defaultProfile.json"].join("");
 var HomeApplication = {
     cellUrl: "https://demo.personium.io/HomeApplication/",
-    defaultProfileUrl: function() {
-        return this.cellUrl + '__/defaultProfile.json';
-    },
+    disabledList: ["App"],
     barfilePath: function() {
         return this.cellUrl + '__/HomeApplication.bar';
     },
@@ -46,6 +45,9 @@ var HomeApplication = {
     },
     loginUrl: function() {
         return targetRootUrl + $("#cell_name").val() + '/io_personium_demo_HomeApplication/src/login.html';
+    },
+    enableInstall: function() {
+        return !(_.contains(this.disabledList, $("#cell_type").val()));
     },
     installHomeApplicationBox: function(token) {
         var oReq = new XMLHttpRequest(); // binary
@@ -124,6 +126,8 @@ var validator = null;
 var jqueryValidateMessage_ja = "https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_ja.js";
 
 additionalCallback = function() {
+    appendCommonDialog();
+    
     disableCreateBtn();
 
     configureJQueryValidation();
@@ -271,19 +275,27 @@ function disableCreateBtn() {
 function createCell() {
     createCellAPI().done(function(data) {
         let access_token = data.access_token;
-        let userProfileUrl = [
+        let cellProfileUrl = [
             targetRootUrl,
             $("#cell_name").val(),
             '/__/profile.json'
         ].join("");
         setMainBoxACL(access_token).done(function() {
-            displaySuccessMsg(i18next.t("create_form.msg.info.cell_created"));
+            openCommonDialog('resultDialog.title', 'create_form.msg.info.cell_created');
         }).fail(function() {
-            displaySuccessMsg(i18next.t("create_form.msg.info.private_profile_cell_created"));
+            openCommonDialog('resultDialog.title', 'create_form.msg.info.private_profile_cell_created');
         }).always(function() {
-            HomeApplication.installHomeApplicationBox(access_token);
-            uploadDefaultProfile(access_token, HomeApplication.defaultProfileUrl(), userProfileUrl);
-            $("#dispMsg").append($(createQRCodeImg(HomeApplication.loginUrl())));
+            $('<input>', {
+                value: $("#cell_name").val(),
+                readonly: true
+            }).appendTo("#modal-common .modal-body");
+
+            uploadDefaultProfile(access_token, defaultProfileUrl, cellProfileUrl);
+
+            if (HomeApplication.enableInstall()) {
+                HomeApplication.installHomeApplicationBox(access_token);
+                $("#modal-common .modal-body").append($(createQRCodeImg(HomeApplication.loginUrl())));
+            };
         });
     }).fail(function() {
         displayFailureMsg(i18next.t("create_form.msg.error.fail_to_create_cell"));
@@ -342,12 +354,20 @@ function getCell(cellName) {
     });
 }
 
-uploadDefaultProfile = function(token, defaultProfileUrl, userProfileUrl) {
+uploadDefaultProfile = function(token, defaultProfileUrl, cellProfileUrl) {
     getProfile(defaultProfileUrl).done(function(profData){
+        let cellProfile = $.extend(
+            true,
+            profData,
+            {
+                "CellType": $("#cell_type").val()
+            }
+        );
+
         $.ajax({
             type: "PUT",
-            url: userProfileUrl,
-            data: JSON.stringify(profData),
+            url: cellProfileUrl,
+            data: JSON.stringify(cellProfile),
             headers: {'Accept':'application/json',
                       'Authorization':'Bearer ' + token}
         })
@@ -375,4 +395,50 @@ createQRCodeImg = function(url) {
         })
     );
     return aDiv;
+};
+
+appendCommonDialog = function() {
+    var html = [
+        '<div id="modal-common" class="modal fade" role="dialog" data-backdrop="static">',
+            '<div class="modal-dialog">',
+                '<div class="modal-content">',
+                    '<div class="modal-header login-header">',
+                        '<h4 class="modal-title"></h4>',
+                    '</div>',
+                    '<div class="modal-body"></div>',
+                    '<div class="modal-footer">',
+                        '<button type="button" class="btn btn-primary" id="b-common-ok" data-i18n="btnOk">OK</button>',
+                    '</div>',
+               '</div>',
+           '</div>',
+        '</div>'
+    ].join("");
+    $("body").append(html);
+    $('#b-common-ok').on('click', function() { 
+        closeTab();
+    });
+};
+
+openCommonDialog = function(title_key, message_key) {
+    $("#modal-common .modal-title")
+        .attr('data-i18n', title_key);
+
+    $("#modal-common .modal-body")
+        .attr('data-i18n', '[html]' + message_key);
+
+    $("#modal-common")
+        .localize()
+        .modal('show');
+};
+
+/*
+ * clean up data and close tab/window
+ */
+closeTab = function() {
+    // define your own cleanupData for each App/screen
+    if ((typeof cleanUpData !== "undefined") && $.isFunction(cleanUpData)) {
+        cleanUpData();
+    }
+    $("#modal-common .modal-body").empty();
+    $("#modal-common").modal('hide');
 };

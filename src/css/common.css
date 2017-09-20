@@ -28,7 +28,8 @@ body{
     margin: 24px 0 30px;
 }
 
-.login-form-controls input {
+.login-form-controls input,
+.login-form-controls select {
     width: 288px;
     padding: 0 16px;
     margin-bottom: 16px;
@@ -37,14 +38,18 @@ body{
     border-radius: 20px;
     color: #333333;
 }
+
 /*
  * IE hack for line-height
  */
-.login-form-controls input[type=text], .login-form-controls input[type=password] {
+.login-form-controls input[type=text],
+.login-form-controls input[type=password],
+.login-form-controls select {
     height: 40px !important;
 }
 
-.login-form-controls input:focus {
+.login-form-controls input:focus,
+.login-form-controls select:focus {
     outline: none;
     border: none;
 }
@@ -75,3 +80,4 @@ body{
 .errorMsg {
     color: red;
 }
+
